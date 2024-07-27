@@ -381,6 +381,16 @@ config VIDEO_OV2311
 	  To compile this driver as a module, choose M here: the
 	  module will be called ov2311.
 
+config VIDEO_GC2093
+	tristate "OmniVision GC2093 sensor support"
+	depends on I2C && VIDEO_DEV
+	help
+	  This is a Video4Linux2 sensor-level driver for the OmniVision
+	  GC2093 camera.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called GC2093.
+
 config VIDEO_OV2640
 	tristate "OmniVision OV2640 sensor support"
 	help

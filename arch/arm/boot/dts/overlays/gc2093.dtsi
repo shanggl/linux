@@ -1,0 +1,26 @@
+// Fragment that configures an gc2093
+
+cam_node: gc2093@6e {
+	compatible = "ovti,gc2093";
+	reg = <0x6e>;
+	status = "okey";
+
+	clocks = <&cam1_clk>;
+	clock-names = "xvclk";
+
+	avdd-supply = <&cam1_reg>;	/* 2.8v */
+	dovdd-supply = <&cam_dummy_reg>;/* 1.8v */
+	dvdd-supply = <&cam_dummy_reg>;	/* 1.2v */
+
+	rotation = <0>;
+	orientation = <2>;
+
+	port {
+		cam_endpoint: endpoint {
+			clock-lanes = <0>;
+			data-lanes = <1 2>;
+			link-frequencies =
+				/bits/ 64 <390000000>;
+		};
+	};
+};
