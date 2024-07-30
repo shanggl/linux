@@ -1,12 +1,12 @@
 // Fragment that configures an gc2093
 
-cam_node: gc2093@6e {
+cam_node: gc2093@37 {
 	compatible = "ovti,gc2093";
-	reg = <0x6e>;
+	reg = <0x37>;
 	status = "okey";
 
 	clocks = <&cam1_clk>;
-	clock-names = "xvclk";
+	clock-names = "eclk";
 
 	avdd-supply = <&cam1_reg>;	/* 2.8v */
 	dovdd-supply = <&cam_dummy_reg>;/* 1.8v */

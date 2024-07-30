@@ -60,7 +60,7 @@
 #define GC2093_ECLK_FREQ				(24 * HZ_PER_MHZ)
 
 /* Number of lanes supported by this driver */
-#define GC2093_DATA_LANES				1
+#define GC2093_DATA_LANES				2
 
 /* Bits per sample of sensor output */
 #define GC2093_BITS_PER_SAMPLE			10
@@ -84,9 +84,9 @@ struct gc2093_reg_list {
 struct gc2093_mode {
 	u32 width;
 	u32 height;
-	u32 exp_def;
+	u32 exp_def;//exposure default
 	u32 hts_def;
-	u32 vts_def;
+	u32 vts_def;//vertcal time line default
 	const struct gc2093_reg_list reg_list;
 };
 
@@ -94,7 +94,7 @@ struct gc2093 {
 	u32 eclk_freq;
 
 	struct clk *eclk;
-	struct gpio_desc *pd_gpio;
+	//struct gpio_desc *pd_gpio;
 	struct gpio_desc *rst_gpio;
 	struct regulator_bulk_data supplies[ARRAY_SIZE(gc2093_supply_names)];
 
@@ -162,6 +162,130 @@ static inline struct gc2093 *to_gc2093(struct v4l2_subdev *sd)
 	return container_of(sd, struct gc2093, subdev);
 }
 
+
+	static const struct gc2093_reg gc2093_init_regs_1920_1080_30fps_mipi_linear[] = {
+
+	/* copy from rv1109*/
+	/*
+ * window size=1920*1080 mipi@2lane
+ * mclk=27M mipi_clk=594Mbps
+ * pixel_line_total=2200 line_frame_total=1125
+ * row_time=29.62us frame_rate=30fps
+ */
+	/* System */
+	{0x03fe, 0x80},
+	{0x03fe, 0x80},
+	{0x03fe, 0x80},
+	{0x03fe, 0x00},
+	{0x03f2, 0x00},
+	{0x03f3, 0x00},
+	{0x03f4, 0x36},
+	{0x03f5, 0xc0},
+	{0x03f6, 0x0a},
+	{0x03f7, 0x01},
+	{0x03f8, 0x2c},
+	{0x03f9, 0x10},
+	{0x03fc, 0x8e},
+	/* Cisctl & Analog */
+	{0x0087, 0x18},
+	{0x00ee, 0x30},
+	{0x00d0, 0xb7},
+	{0x01a0, 0x00},
+	{0x01a4, 0x40},
+	{0x01a5, 0x40},
+	{0x01a6, 0x40},
+	{0x01af, 0x09},
+	{0x0001, 0x00},
+	{0x0002, 0x02},
+	{0x0003, 0x00},
+	{0x0004, 0x02},
+	{0x0005, 0x04},
+	{0x0006, 0x4c},
+	{0x0007, 0x00},
+	{0x0008, 0x11},
+	{0x0009, 0x00},
+	{0x000a, 0x02},
+	{0x000b, 0x00},
+	{0x000c, 0x04},
+	{0x000d, 0x04},
+	{0x000e, 0x40},
+	{0x000f, 0x07},
+	{0x0010, 0x8c},
+	{0x0013, 0x15},
+	{0x0019, 0x0c},
+	{0x0041, 0x04},
+	{0x0042, 0x65},
+	{0x0053, 0x60},
+	{0x008d, 0x92},
+	{0x0090, 0x00},
+	{0x00c7, 0xe1},
+	{0x001b, 0x73},
+	{0x0028, 0x0d},
+	{0x0029, 0x24},
+	{0x002b, 0x04},
+	{0x002e, 0x23},
+	{0x0037, 0x03},
+	{0x0043, 0x04},
+	{0x0044, 0x38},
+	{0x004a, 0x01},
+	{0x004b, 0x28},
+	{0x0055, 0x38},
+	{0x006b, 0x44},
+	{0x0077, 0x00},
+	{0x0078, 0x20},
+	{0x007c, 0xa1},
+	{0x00d3, 0xd4},
+	{0x00e6, 0x50},
+	/* Gain */
+	{0x00b6, 0xc0},
+	{0x00b0, 0x60},
+	/* Isp */
+	{0x0102, 0x89},
+	{0x0104, 0x01},
+	{0x010f, 0x00},
+	{0x0158, 0x00},
+	{0x0123, 0x08},
+	{0x0123, 0x00},
+	{0x0120, 0x01},
+	{0x0121, 0x00},
+	{0x0122, 0x10},
+	{0x0124, 0x03},
+	{0x0125, 0xff},
+	{0x0126, 0x3c},
+	{0x001a, 0x8c},
+	{0x00c6, 0xe0},
+	/* Blk */
+	{0x0026, 0x30},
+	{0x0142, 0x00},
+	{0x0149, 0x1e},
+	{0x014a, 0x07},
+	{0x014b, 0x80},
+	{0x0155, 0x00},
+	{0x0414, 0x78},
+	{0x0415, 0x78},
+	{0x0416, 0x78},
+	{0x0417, 0x78},
+	/* Window */
+	{0x0192, 0x02},
+	{0x0194, 0x03},
+	{0x0195, 0x04},
+	{0x0196, 0x38},
+	{0x0197, 0x07},
+	{0x0198, 0x80},
+	/* MIPI */
+	{0x019a, 0x06},
+	{0x007b, 0x2a},
+	{0x0023, 0x2d},
+	{0x0201, 0x27},
+	{0x0202, 0x56},
+	{0x0203, 0xce},
+	{0x0212, 0x80},
+	{0x0213, 0x07},
+	{0x003e, 0x91},
+};
+
+#if 0
+
 /*
  * eclk 24Mhz
  * pclk 39Mhz
@@ -172,8 +296,6 @@ static inline struct gc2093 *to_gc2093(struct v4l2_subdev *sd)
  * max_framerate 30fps
  * mipi_datarate per lane 780Mbps
  */
-	static const struct gc2093_reg gc2093_init_regs_1920_1080_30fps_mipi_linear[] = {
-
 	/****system****/
 	{0x03fe,0xf0},
 	{0x03fe,0xf0},
@@ -325,6 +447,7 @@ static inline struct gc2093 *to_gc2093(struct v4l2_subdev *sd)
 	{0x0215,0x10},
 	{0x003e,0x91},
 };
+#endif 
 #if 0
 static const struct gc2093_reg gc2093_1600x1200_regs[] = {
 	{0xfd, 0x01},
@@ -433,7 +556,7 @@ static const s64 link_freq_menu_items[] = {
 
 static u64 to_pixel_rate(u32 f_index)
 {
-	u64 pixel_rate = link_freq_menu_items[f_index] * 2 * GC2093_DATA_LANES;
+	u64 pixel_rate = link_freq_menu_items[f_index] * 2 * GC2093_DATA_LANES ;
 
 	do_div(pixel_rate, GC2093_BITS_PER_SAMPLE);
 
@@ -483,7 +606,7 @@ static int gc2093_read_reg(struct gc2093 *gc2093, u16 reg, u32 len, u32 *val)
 	if (ret != ARRAY_SIZE(msgs))
 		return -EIO;
 
-	*val = get_unaligned_le32(data_buf);
+	*val = get_unaligned_be16(data_buf);//返回的是 0x2093 但是转换成了9320
 
 	return 0;
 }
@@ -619,8 +742,12 @@ static int gc2093_check_sensor_id(struct gc2093 *gc2093)
 
 	/* Validate the chip ID */
 	ret = gc2093_read_reg(gc2093, GC2093_REG_CHIP_ID, 2, &chip_id);
+	
+	dev_info(&client->dev, "get sensor id(0x%04x) ret[%d]\n", chip_id,ret);
+
 	if (ret < 0)
 		return ret;
+
 
 	if ((chip_id & GC2093_ID_MASK) != GC2093_ID) {
 		dev_err(&client->dev, "unexpected sensor id(0x%04x)\n", chip_id);
@@ -637,8 +764,10 @@ static int gc2093_power_on(struct device *dev)
 	struct gc2093 *gc2093 = to_gc2093(sd);
 	int ret;
 
-	gpiod_set_value_cansleep(gc2093->rst_gpio, 1);
-	gpiod_set_value_cansleep(gc2093->pd_gpio, 1);
+	gpiod_set_value_cansleep(gc2093->rst_gpio, 0);
+	//gpiod_set_value_cansleep(gc2093->pd_gpio, 1);
+
+	dev_info(dev, "Power on gc2093\n");
 
 	ret = clk_prepare_enable(gc2093->eclk);
 	if (ret < 0) {
@@ -654,10 +783,10 @@ static int gc2093_power_on(struct device *dev)
 	}
 	usleep_range(5000, 6000);
 
-	gpiod_set_value_cansleep(gc2093->pd_gpio, 0);
-	usleep_range(5000, 6000);
+	//gpiod_set_value_cansleep(gc2093->pd_gpio, 0);
+	//usleep_range(5000, 6000);
 
-	gpiod_set_value_cansleep(gc2093->rst_gpio, 0);
+	gpiod_set_value_cansleep(gc2093->rst_gpio, 1);
 	usleep_range(5000, 6000);
 
 	ret = gc2093_check_sensor_id(gc2093);
@@ -681,9 +810,9 @@ static int gc2093_power_off(struct device *dev)
 	struct v4l2_subdev *sd = i2c_get_clientdata(client);
 	struct gc2093 *gc2093 = to_gc2093(sd);
 
-	gpiod_set_value_cansleep(gc2093->rst_gpio, 1);
+	gpiod_set_value_cansleep(gc2093->rst_gpio, 0);
 	clk_disable_unprepare(gc2093->eclk);
-	gpiod_set_value_cansleep(gc2093->pd_gpio, 1);
+	//gpiod_set_value_cansleep(gc2093->pd_gpio, 1);
 	regulator_bulk_disable(ARRAY_SIZE(gc2093_supply_names),
 			       gc2093->supplies);
 
@@ -695,20 +824,27 @@ static int __gc2093_start_stream(struct gc2093 *gc2093)
 	const struct gc2093_reg_list *reg_list;
 	int ret;
 
+	struct i2c_client *client = v4l2_get_subdevdata(&gc2093->subdev);
+
 	/* Apply default values of current mode */
 	reg_list = &gc2093->cur_mode->reg_list;
 	ret = gc2093_write_array(gc2093, reg_list);
+	dev_info(&client->dev,"[GC2093] write_array ret [%d]\n",ret);
 	if (ret)
 		return ret;
 
 	/* Apply customized values from user */
 	ret = __v4l2_ctrl_handler_setup(gc2093->subdev.ctrl_handler);
+	dev_info(&client->dev,"[GC2093] ctrl handler ret [%d]\n",ret);
 	if (ret)
 		return ret;
 
 	/* Set stream on register */
-	return gc2093_write_reg(gc2093, REG_SC_CTRL_MODE, 1,
+	ret = gc2093_write_reg(gc2093, REG_SC_CTRL_MODE, 1,
 					 SC_CTRL_MODE_STREAMING);
+	dev_info(&client->dev,"[GC2093] set mode stream ret [%d]\n",ret);
+
+	return ret;
 }
 
 static int __gc2093_stop_stream(struct gc2093 *gc2093)
@@ -735,9 +871,11 @@ static int gc2093_entity_init_cfg(struct v4l2_subdev *sd,
 
 static int gc2093_s_stream(struct v4l2_subdev *sd, int on)
 {
+	
 	struct gc2093 *gc2093 = to_gc2093(sd);
 	struct i2c_client *client = v4l2_get_subdevdata(&gc2093->subdev);
 	int ret;
+	dev_info(&client->dev, "[GC2093] begin start stream\n");
 
 	mutex_lock(&gc2093->mutex);
 
@@ -748,16 +886,24 @@ static int gc2093_s_stream(struct v4l2_subdev *sd, int on)
 
 	if (on) {
 		ret = pm_runtime_resume_and_get(&client->dev);
+		
+		dev_info(&client->dev, "[GC2093]  start stream pm resume ret[%d]\n",ret);
+
 		if (ret < 0)
 			goto unlock_and_return;
 
 		ret = __gc2093_start_stream(gc2093);
+
+		dev_info(&client->dev, "[GC2093] __gc2093_start_stream [%d]\n",ret);
+
 		if (ret) {
 			__gc2093_stop_stream(gc2093);
 			gc2093->streaming = !on;
 			goto err_rpm_put;
 		}
 	} else {
+
+		dev_info(&client->dev, "[GC2093] __gc2093_stop_stream\n");
 		__gc2093_stop_stream(gc2093);
 		pm_runtime_put(&client->dev);
 	}
@@ -875,7 +1021,7 @@ static int gc2093_set_ctrl(struct v4l2_ctrl *ctrl)
 	struct i2c_client *client = v4l2_get_subdevdata(&gc2093->subdev);
 	s64 max_expo;
 	u32 vts = 0;
-	int ret;
+	int ret = 0;
 
 	/* Propagate change of current control to all related controls */
 	if (ctrl->id == V4L2_CID_VBLANK) {
@@ -888,6 +1034,8 @@ static int gc2093_set_ctrl(struct v4l2_ctrl *ctrl)
 					 gc2093->exposure->default_value);
 	}
 
+	dev_info(&client->dev, "set ctrl begin\n");
+
 	/* V4L2 controls values will be applied only when power is already up */
 	if (!pm_runtime_get_if_in_use(&client->dev))
 		return 0;
@@ -898,9 +1046,11 @@ static int gc2093_set_ctrl(struct v4l2_ctrl *ctrl)
 				       (ctrl->val >> 8) & 0x3f);
 		ret |= gc2093_write_reg(gc2093, GC2093_REG_EXPOSURE_L, 1,
 					ctrl->val & 0xff);
+		dev_info(&client->dev, "set ctrl exposure ret [%d]\n",ret);
 		break;
 	case V4L2_CID_ANALOGUE_GAIN:
-		gc2093_set_gain(gc2093, ctrl->val);
+		ret = gc2093_set_gain(gc2093, ctrl->val);
+		dev_info(&client->dev, "set ctrl gain ret [%d]\n",ret);
 		break;
 	case V4L2_CID_VBLANK:
 		vts = gc2093->cur_mode->height + ctrl->val;
@@ -908,11 +1058,18 @@ static int gc2093_set_ctrl(struct v4l2_ctrl *ctrl)
 				       (vts >> 8) & 0x3f);
 		ret |= gc2093_write_reg(gc2093, GC2093_REG_VTS_L, 1,
 					vts & 0xff);
+		dev_info(&client->dev, "set ctrl vblank ret [%d]\n",ret);
 		break;
 	case V4L2_CID_TEST_PATTERN:
 	//	ret = gc2093_set_test_pattern(gc2093, ctrl->val);
+		dev_info(&client->dev, "set ctrl test patten \n");
+		break;
+	case V4L2_CID_PIXEL_RATE:
+	case V4L2_CID_HBLANK:
+		/* Read-only, but we adjust it based on mode. */
 		break;
 	default:
+		dev_info(&client->dev, "set ctrl not support [%d] \n",ctrl->id);
 		ret = -EINVAL;
 		break;
 	}
@@ -954,6 +1111,7 @@ static int gc2093_initialize_controls(struct gc2093 *gc2093)
 	struct v4l2_ctrl_handler *handler;
 	struct v4l2_ctrl *ctrl;
 	s64 exposure_max;
+	s64 exposure_def;
 	s64 vblank_def;
 	s64 pixel_rate;
 	s64 h_blank;
@@ -963,45 +1121,58 @@ static int gc2093_initialize_controls(struct gc2093 *gc2093)
 	mode = gc2093->cur_mode;
 	ret = v4l2_ctrl_handler_init(handler, 7);
 	if (ret)
+	{
+		dev_info(&client->dev,"end handler init 0 ret=[%d] \n",handler->error);
 		return ret;
+	}
+		
 
 	handler->lock = &gc2093->mutex;
+	
 
-	ctrl = v4l2_ctrl_new_int_menu(handler, NULL, V4L2_CID_LINK_FREQ, 0, 0,
+	ctrl = v4l2_ctrl_new_int_menu(handler, &gc2093_ctrl_ops, V4L2_CID_LINK_FREQ, 0, 0,
 				      link_freq_menu_items);
 	if (ctrl)
 		ctrl->flags |= V4L2_CTRL_FLAG_READ_ONLY;
 
+    dev_info(&client->dev,"end link frequency ret=[%d] \n",handler->error);
+
 	pixel_rate = to_pixel_rate(0);
-	v4l2_ctrl_new_std(handler, NULL, V4L2_CID_PIXEL_RATE, 0, pixel_rate, 1,
-			  pixel_rate);
+	v4l2_ctrl_new_std(handler, NULL, V4L2_CID_PIXEL_RATE, 0, pixel_rate, 1, pixel_rate);
+	//v4l2_ctrl_new_std(handler, &gc2093_ctrl_ops, V4L2_CID_PIXEL_RATE, pixel_rate, pixel_rate, 1, pixel_rate);
+    dev_info(&client->dev,"end pixel rate ret=[%d] \n",handler->error);
 
 	h_blank = mode->hts_def - mode->width;
-	v4l2_ctrl_new_std(handler, NULL, V4L2_CID_HBLANK, h_blank, h_blank, 1,
+	v4l2_ctrl_new_std(handler, &gc2093_ctrl_ops, V4L2_CID_HBLANK, h_blank, h_blank, 1,
 			  h_blank);
-
 	vblank_def = mode->vts_def - mode->height;
 	v4l2_ctrl_new_std(handler, &gc2093_ctrl_ops, V4L2_CID_VBLANK,
 			  vblank_def, GC2093_VTS_MAX - mode->height, 1,
 			  vblank_def);
+    dev_info(&client->dev,"end hblank vblank ret=[%d] \n",handler->error);
 
 	exposure_max = mode->vts_def - 4;
+	exposure_def = (exposure_max < mode->exp_def) ?
+		exposure_max : mode->exp_def;
 	gc2093->exposure = v4l2_ctrl_new_std(handler, &gc2093_ctrl_ops,
 					      V4L2_CID_EXPOSURE,
 					      GC2093_EXPOSURE_MIN,
-					      exposure_max,
+						  exposure_max,
 					      GC2093_EXPOSURE_STEP,
-					      mode->exp_def);
+					      exposure_def);
+    dev_info(&client->dev,"end exposure ret=[%d] \n",handler->error);
 
 	v4l2_ctrl_new_std(handler, &gc2093_ctrl_ops,
 			  V4L2_CID_ANALOGUE_GAIN, GC2093_GAIN_MIN,
 			  GC2093_GAIN_MAX, GC2093_GAIN_STEP,
 			  GC2093_GAIN_DEFAULT);
+    dev_info(&client->dev,"end gain ret=[%d] \n",handler->error);
 
 	v4l2_ctrl_new_std_menu_items(handler, &gc2093_ctrl_ops,
 				     V4L2_CID_TEST_PATTERN,
 				     ARRAY_SIZE(gc2093_test_pattern_menu) - 1,
 				     0, 0, gc2093_test_pattern_menu);
+    dev_info(&client->dev,"end test patten ret=[%d] \n",handler->error);
 
 	if (handler->error) {
 		ret = handler->error;
@@ -1027,7 +1198,7 @@ static int gc2093_check_hwcfg(struct device *dev, struct gc2093 *gc2093)
 		.bus_type = V4L2_MBUS_CSI2_DPHY,
 	};
 	unsigned int i, j;
-	u32 clk_volt;
+	//u32 clk_volt;
 	int ret;
 
 	if (!fwnode)
@@ -1091,31 +1262,21 @@ static int gc2093_probe(struct i2c_client *client)
 		gc2093->fmt.code = MEDIA_BUS_FMT_SRGGB10_1X10;
 	}
 
-	gc2093->eclk = devm_clk_get(dev, "eclk");
+	gc2093->eclk = devm_clk_get(dev, NULL);
 	if (IS_ERR(gc2093->eclk))
 		return dev_err_probe(dev, PTR_ERR(gc2093->eclk),
 				     "failed to get eclk\n");
 
-	ret = device_property_read_u32(dev, "clock-frequency",
-				       &gc2093->eclk_freq);
-	if (ret < 0)
-		return dev_err_probe(dev, ret,
-				     "failed to get eclk frequency\n");
-
-	ret = clk_set_rate(gc2093->eclk, gc2093->eclk_freq);
-	if (ret < 0)
-		return dev_err_probe(dev, ret,
-				     "failed to set eclk frequency (24MHz)\n");
-
 	if (clk_get_rate(gc2093->eclk) != GC2093_ECLK_FREQ)
-		dev_warn(dev, "eclk mismatched, mode is based on 24MHz\n");
+		return dev_err_probe(dev, PTR_ERR(gc2093->eclk),"eclk mismatched, mode is based on 24MHz\n");
 
-	gc2093->pd_gpio = devm_gpiod_get(dev, "powerdown", GPIOD_OUT_HIGH);
-	if (IS_ERR(gc2093->pd_gpio))
-		return dev_err_probe(dev, PTR_ERR(gc2093->pd_gpio),
-				     "failed to get powerdown-gpios\n");
 
-	gc2093->rst_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
+	// gc2093->pd_gpio = devm_gpiod_get(dev, "powerdown", GPIOD_OUT_HIGH);
+	// if (IS_ERR(gc2093->pd_gpio))
+	// 	return dev_err_probe(dev, PTR_ERR(gc2093->pd_gpio),
+	// 			     "failed to get powerdown-gpios\n");
+
+	gc2093->rst_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
 	if (IS_ERR(gc2093->rst_gpio))
 		return dev_err_probe(dev, PTR_ERR(gc2093->rst_gpio),
 				     "failed to get reset-gpios\n");

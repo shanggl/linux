@@ -48,7 +48,7 @@
 		};
 	};
 
-	clk_frag: fragment@4{
+	clk_frag: fragment@4 {
 		target = <&cam1_clk>;
 		__overlay__ {
 			status = "okay";

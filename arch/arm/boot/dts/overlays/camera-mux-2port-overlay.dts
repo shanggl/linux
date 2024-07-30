@@ -199,6 +199,14 @@
 					#undef cam_endpoint
 					#undef vcm_node
 					#undef cam1_clk
+
+				    #define cam_node gc2093_0
+					#define cam_endpoint gc2093_0_ep
+					#define cam1_clk clk_24mhz
+					#include "gc2093.dtsi"
+					#undef cam_node
+					#undef cam_endpoint
+					#undef cam1_clk
 				};
 
 				i2c@1 {
@@ -308,6 +316,14 @@
 					#undef cam_node
 					#undef cam_endpoint
 					#undef vcm_node
+					#undef cam1_clk
+
+					#define cam_node gc2093_1
+					#define cam_endpoint gc2093_1_ep
+					#define cam1_clk clk_24mhz
+					#include "gc2093.dtsi"
+					#undef cam_node
+					#undef cam_endpoint
 					#undef cam1_clk
 				};
 			};
@@ -477,6 +493,9 @@
 			      <&ov64a40_0>, "status=okay",
 			      <&ov64a40_0_vcm>, "status=okay",
 			      <&ov64a40_0>,"lens-focus:0=", <&ov64a40_0_vcm>;
+		cam0-gc2093 = <&mux_in0>, "remote-endpoint:0=",<&gc2093_0_ep>,
+			      <&gc2093_0_ep>, "remote-endpoint:0=",<&mux_in0>,
+			      <&gc2093_0>, "status=okay";
 
 		cam1-arducam-64mp = <&mux_in1>, "remote-endpoint:0=",<&arducam_64mp_1_ep>,
 				    <&arducam_64mp_1_ep>, "remote-endpoint:0=",<&mux_in1>,
@@ -530,6 +549,9 @@
 			      <&ov64a40_1>, "status=okay",
 			      <&ov64a40_1_vcm>, "status=okay",
 			      <&ov64a40_1>,"lens-focus:0=", <&ov64a40_1_vcm>;
+		cam1-gc2093 = <&mux_in1>, "remote-endpoint:0=",<&gc2093_1_ep>,
+			      <&gc2093_1_ep>, "remote-endpoint:0=",<&mux_in1>,
+			      <&gc2093_1>, "status=okay";
 
 		cam0-imx290-clk-freq = <&clk_imx290>,"clock-frequency:0",
 				       <&imx290_0>,"clock-frequency:0";
