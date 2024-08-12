@@ -1252,14 +1252,14 @@ static int gc2093_probe(struct i2c_client *client)
 
 	v4l2_i2c_subdev_init(&gc2093->subdev, client, &gc2093_subdev_ops);
 
-	gc2093->fmt.code = MEDIA_BUS_FMT_SBGGR10_1X10;
+	gc2093->fmt.code = MEDIA_BUS_FMT_SRGGB10_1X10;
 
 	/* Optional indication of physical rotation of sensor */
 	rotation = 0;
 	device_property_read_u32(dev, "rotation", &rotation);
 	if (rotation == 180) {
 		gc2093->upside_down = true;
-		gc2093->fmt.code = MEDIA_BUS_FMT_SRGGB10_1X10;
+		gc2093->fmt.code = MEDIA_BUS_FMT_SBGGR10_1X10;
 	}
 
 	gc2093->eclk = devm_clk_get(dev, NULL);
